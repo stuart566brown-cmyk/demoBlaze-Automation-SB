@@ -14,13 +14,8 @@ test('Sign up, Login and Logout Functionality', async ({ page }: { page: Page })
   await expect(page.getByRole('link', { name: 'Sign up' })).toBeVisible();
   await page.getByRole('link', { name: 'Sign up' }).click();
   await expect(page.getByRole('heading', { name: 'Sign up' })).toBeVisible();
-  await page.getByRole('textbox', { name: 'Username:' }).click();
-  await page.getByRole('textbox', { name: 'Username:' }).fill('');
-  await expect(page.getByRole('textbox', { name: 'Username:' })).toHaveValue('');
   await page.getByRole('textbox', { name: 'Username:' }).fill(newUsername);
   await page.getByRole('textbox', { name: 'Password:' }).click();
-  await page.getByRole('textbox', { name: 'Password:' }).fill('');
-  await expect(page.getByRole('textbox', { name: 'Password:' })).toHaveValue('');
   await page.getByRole('textbox', { name: 'Password:' }).fill(newPassword);
   await page.getByRole('button', { name: 'Sign up' }).click();
   page.once('dialog', dialog => {
@@ -32,6 +27,7 @@ test('Sign up, Login and Logout Functionality', async ({ page }: { page: Page })
 
   //Sign up as existing user
   await page.reload();
+  await page.waitForTimeout(3000);
   await page.getByRole('link', { name: 'Sign up' }).click();
   await expect(page.getByRole('heading', { name: 'Sign up' })).toBeVisible();
   await page.getByRole('textbox', { name: 'Username:' }).click();
@@ -47,6 +43,7 @@ test('Sign up, Login and Logout Functionality', async ({ page }: { page: Page })
 
   //Sign in as new user with wrong password
   await page.reload();
+  await page.waitForTimeout(3000);
   await expect(page.getByRole('link', { name: 'Log in' })).toBeVisible();
   await page.getByRole('link', { name: 'Log in' }).click();
   await page.locator('#loginusername').click();
@@ -63,8 +60,9 @@ test('Sign up, Login and Logout Functionality', async ({ page }: { page: Page })
   });
   await page.getByLabel('Log in').getByText('Close').click();
 
-  //Sign in as user with correct password
+  //Sign in as user with correct password then log out
   await page.reload();
+  await page.waitForTimeout(3000);
   await expect(page.getByRole('link', { name: 'Log in' })).toBeVisible();
   await page.getByRole('link', { name: 'Log in' }).click();
   await page.locator('#loginusername').click();
@@ -75,4 +73,6 @@ test('Sign up, Login and Logout Functionality', async ({ page }: { page: Page })
   await page.locator('#loginpassword').fill(newPassword);
   await page.getByRole('button', { name: 'Log in' }).click();
   await expect(page.getByRole('link', { name: 'Welcome ' + newUsername })).toBeVisible();
+  await page.getByRole('link', { name: 'Log out' }).click();
+  await expect(page.getByRole('link', { name: 'Log in' })).toBeVisible();
 });
