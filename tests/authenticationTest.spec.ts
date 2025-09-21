@@ -7,23 +7,9 @@ test('Sign up, Login and Logout Functionality', async ({ page }: { page: Page })
   const newUsername = generateUsername();
   const newPassword = generatePassword();
 
-  //Sign up as existing user
+  //Sign up as a new user
   await page.goto('https://www.demoblaze.com/index.html');
   await page.waitForTimeout(3000); // Wait 3 seconds to see the page
-  await page.getByRole('link', { name: 'Sign up' }).click();
-  await expect(page.getByRole('heading', { name: 'Sign up' })).toBeVisible();
-  await page.getByRole('textbox', { name: 'Username:' }).click();
-  await page.getByRole('textbox', { name: 'Username:' }).fill(testCredentials.username);
-  await page.getByRole('textbox', { name: 'Username:' }).press('Tab');
-  await page.getByRole('textbox', { name: 'Password:' }).fill(testCredentials.password);
-  page.once('dialog', dialog => {
-    console.log(`Dialog message: ${dialog.message()}`);
-     expect(dialog.message()).toBe('This user already exist.');
-    dialog.dismiss().catch(() => {});
-  });
-  await page.getByLabel('Sign up').getByText('Close').click();
-
-  //Sign up as a new user
   await page.reload();
   await expect(page.getByRole('link', { name: 'Sign up' })).toBeVisible();
   await page.getByRole('link', { name: 'Sign up' }).click();
@@ -40,6 +26,21 @@ test('Sign up, Login and Logout Functionality', async ({ page }: { page: Page })
   page.once('dialog', dialog => {
     console.log(`Dialog message: ${dialog.message()}`);
     expect(dialog.message()).toBe('Sign up successful.');
+    dialog.dismiss().catch(() => {});
+  });
+  await page.getByLabel('Sign up').getByText('Close').click();
+
+  //Sign up as existing user
+  await page.reload();
+  await page.getByRole('link', { name: 'Sign up' }).click();
+  await expect(page.getByRole('heading', { name: 'Sign up' })).toBeVisible();
+  await page.getByRole('textbox', { name: 'Username:' }).click();
+  await page.getByRole('textbox', { name: 'Username:' }).fill(newUsername);
+  await page.getByRole('textbox', { name: 'Username:' }).press('Tab');
+  await page.getByRole('textbox', { name: 'Password:' }).fill(newPassword);
+  page.once('dialog', dialog => {
+    console.log(`Dialog message: ${dialog.message()}`);
+     expect(dialog.message()).toBe('This user already exist.');
     dialog.dismiss().catch(() => {});
   });
   await page.getByLabel('Sign up').getByText('Close').click();
